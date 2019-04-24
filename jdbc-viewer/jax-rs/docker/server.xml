@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<server description="new server">
+  <featureManager>
+    <feature>jaxrs-2.0</feature>
+	  <feature>jdbc-4.1</feature>
+		<feature>jndi-1.0</feature>
+	</featureManager>
+  <httpEndpoint host="*" httpPort="9080" httpsPort="9443" id="defaultHttpEndpoint"/>
+  <applicationManager autoExpand="true"/>
+  <!-- <applicationMonitor updateTrigger="mbean"/> -->
+  <!-- <webApplication id="JdbcViewerJaxRS" location="JdbcViewerJaxRS.war" name="JdbcViewerJaxRS"/> -->
+
+  <cors allowedOrigins="*" domain="/JdbcViewerJaxRS/"/>
+
+  <!-- Set and use a local JDBC driver then make a JNDI datasource -->
+  <library id="jdbcViewerLibrary">
+		<fileset dir="/config/lib" includes="*"/>
+	</library>
+
+	<dataSource id="jdbcViewerDataSource" jndiName="jdbc/jdbcViewerDb2">
+		<jdbcDriver libraryRef="jdbcViewerLibrary"/>
+		<properties.db2.jcc
+      databaseName="${env.DB2LOCATION}"
+      driverType="4"
+      password="${env.ZOSMF_PASS}"
+      portNumber="${env.DB2PORT}"
+      serverName="${env.HOSTNAME}"
+      user="${env.ZOSMF_USER}"
+      timestampOutputType="1"
+      queryCloseImplicit="1"
+      allowNextOnExhaustedResultSet="1"
+      timeFormat="1"
+      timerLevelForQueryTimeOut="-1"
+      currentSchema="${env.SCHEMANAME}"
+    />
+	</dataSource>
+</server>

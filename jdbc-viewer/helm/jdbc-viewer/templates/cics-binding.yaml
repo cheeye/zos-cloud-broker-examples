@@ -1,0 +1,14 @@
+{{- if eq .Values.backend "cics" }}
+apiVersion: servicecatalog.k8s.io/v1beta1
+kind: ServiceBinding
+metadata:
+  name: {{ template "JdbcViewer.fullname" . }}-cics-wlp-binding
+  labels:
+    chart: {{ template "JdbcViewer.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  instanceRef:
+    name: {{ template "JdbcViewer.fullname" . }}-cics-wlp-instance
+  secretName: {{ template "JdbcViewer.fullname" . }}-cics-wlp-secret
+{{- end }}

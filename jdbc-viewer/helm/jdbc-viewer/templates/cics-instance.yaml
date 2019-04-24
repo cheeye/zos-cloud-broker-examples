@@ -1,0 +1,17 @@
+{{- if eq .Values.backend "cics" }}
+apiVersion: servicecatalog.k8s.io/v1beta1
+kind: ServiceInstance
+metadata:
+  name: {{ template "JdbcViewer.fullname" . }}-cics-wlp-instance
+  labels:
+    chart: {{ template "JdbcViewer.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  # References one of the previously returned services
+  clusterServiceClassExternalName: zos-cics54
+  clusterServicePlanExternalName: zos-cics54
+  parameters:
+    "z/OSMF User ID": {{ .Values.zosmf.user }}
+    "z/OSMF User Password": {{ .Values.zosmf.pass }}
+{{- end }}

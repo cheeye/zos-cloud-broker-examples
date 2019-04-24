@@ -1,0 +1,58 @@
+{{- if eq .Values.backend "cics" }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "JdbcViewer.fullname" . }}-cics-liberty-db2-bootstrap
+  labels:
+    chart: {{ template "JdbcViewer.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  #annotations:
+  #  "helm.sh/hook": post-install
+  #  "helm.sh/hook-delete-policy": "before-hook-creation"
+spec:
+  template:
+    spec:
+      containers:
+      - name: {{ template "JdbcViewer.fullname" . }}-cics-liberty-db2-bootstrap
+        image: ivandov/jdbc-viewer-job
+        imagePullPolicy: Always
+        command: ["./bootstrap_cics_wlp.sh"]
+        env:
+        - name: ZOSMF_USER
+          value: {{ .Values.zosmf.user }}
+        - name: ZOSMF_PASS
+          value: {{ .Values.zosmf.pass }}
+        - name: DFH_REGION_HOSTNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "JdbcViewer.fullname" . }}-cics-wlp-secret
+              key: DFH_REGION_HOSTNAME
+        - name: DFH_REGION_ZFS_DIRECTORY
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "JdbcViewer.fullname" . }}-cics-wlp-secret
+              key: DFH_REGION_ZFS_DIRECTORY
+        - name: DB2_HOSTNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "JdbcViewer.fullname" . }}-db2-secret
+              key: hostname
+        - name: DB2_PORT
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "JdbcViewer.fullname" . }}-db2-secret
+              key: db2port
+        - name: DB2_LOCATION
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "JdbcViewer.fullname" . }}-db2-secret
+              key: db2location
+        - name: DB2_SCHEMA
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "JdbcViewer.fullname" . }}-db2-secret
+              key: SCHEMANAME
+      restartPolicy: Never
+  backoffLimit: 4
+{{- end }}

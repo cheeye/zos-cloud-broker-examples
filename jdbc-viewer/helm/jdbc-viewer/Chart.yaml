@@ -1,0 +1,6 @@
+apiVersion: v1
+name: jdbc-viewer
+description: A Helm chart for the JDBC Viewer application
+version: 0.4.8
+keywords:
+  - z/os

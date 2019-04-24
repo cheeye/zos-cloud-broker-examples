@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "JdbcViewer.fullname" . }}-frontend
+  labels:
+    app: {{ template "JdbcViewer.name" . }}-frontend
+    chart: {{ template "JdbcViewer.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: NodePort
+  ports:
+    - name: frontend
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: {{ template "JdbcViewer.name" . }}-frontend
+    release: {{ .Release.Name }}

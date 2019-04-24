@@ -1,0 +1,27 @@
+zosmf:
+  __metadata:
+    label: "z/OSMF Configuration Data"
+  user:
+    __metadata:
+      label: "z/OSMF User"
+      description: "z/OSMF User ID - Used to provision the Db2 Schema Service"
+      type: "string"
+      required: true
+  pass:
+    __metadata:
+      label: "z/OSMF Password"
+      description: "z/OSMF Password associated with z/OSMF User"
+      type: "password"
+      required: true
+
+backend:
+  __metadata:
+    label: "Backend Deployment Type"
+    description: "The Java JAX-RS 'Backend' can be deployed as a container in ICP or directly onto CICS + Liberty"
+    type: "string"
+    required: true
+    options:
+    - label: "CICS + WebSphere Liberty"
+      value: "cics"
+    - label: "ICP WebSphere Liberty Container"
+      value: "icp"

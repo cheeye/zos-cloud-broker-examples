@@ -1,0 +1,17 @@
+apiVersion: servicecatalog.k8s.io/v1beta1
+kind: ServiceInstance
+metadata:
+  name: {{ template "JdbcViewer.fullname" . }}-db2-instance
+  labels:
+    chart: {{ template "JdbcViewer.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  # References one of the previously returned services
+  clusterServiceClassExternalName: zos-db2schemaprolike
+  clusterServicePlanExternalName: zos-db2schemaprolike
+  parameters:
+    GMDB: KRDBGM
+    GMSCHEMA: KRUSERGM
+    "z/OSMF User ID": {{ .Values.zosmf.user }}
+    "z/OSMF User Password": {{ .Values.zosmf.pass }}

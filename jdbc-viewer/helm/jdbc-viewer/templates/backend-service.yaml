@@ -1,0 +1,21 @@
+{{- if eq .Values.backend "icp" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "JdbcViewer.fullname" . }}-backend
+  labels:
+    app: {{ template "JdbcViewer.name" . }}-backend
+    chart: {{ template "JdbcViewer.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: NodePort
+  ports:
+    - name: backend
+      port: 9080
+      targetPort: 9080
+      protocol: TCP
+  selector:
+    app: {{ template "JdbcViewer.name" . }}-backend
+    release: {{ .Release.Name }}
+{{- end }}

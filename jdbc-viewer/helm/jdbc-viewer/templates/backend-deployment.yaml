@@ -1,0 +1,56 @@
+{{- if eq .Values.backend "icp" }}
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "JdbcViewer.fullname" . }}-backend
+  labels:
+    app: {{ template "JdbcViewer.name" . }}-backend
+    chart: {{ template "JdbcViewer.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "JdbcViewer.name" . }}-backend
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "JdbcViewer.name" . }}-backend
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-jaxrs
+          image: "ivandov/jdbc-viewer-jaxrs"
+          imagePullPolicy: Always
+          env:
+            - name: "HOSTNAME"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "JdbcViewer.fullname" . }}-db2-secret
+                  key: hostname
+            - name: "DB2PORT"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "JdbcViewer.fullname" . }}-db2-secret
+                  key: db2port
+            - name: "DB2LOCATION"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "JdbcViewer.fullname" . }}-db2-secret
+                  key: db2location
+            - name: "SCHEMANAME"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "JdbcViewer.fullname" . }}-db2-secret
+                  key: SCHEMANAME
+            - name: ZOSMF_USER
+              value: {{ .Values.zosmf.user }}
+            - name: ZOSMF_PASS
+              value: {{ .Values.zosmf.pass }}
+          ports:
+            - name: backend
+              containerPort: 9080
+              protocol: TCP
+{{- end }}

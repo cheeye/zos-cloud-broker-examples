@@ -1,0 +1,55 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "JdbcViewer.fullname" . }}-frontend
+  labels:
+    app: {{ template "JdbcViewer.name" . }}-frontend
+    chart: {{ template "JdbcViewer.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "JdbcViewer.name" . }}-frontend
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "JdbcViewer.name" . }}-frontend
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-vue
+          image: "ivandov/jdbc-viewer-vue"
+          imagePullPolicy: Always
+          env:
+          {{- if eq .Values.backend "icp" }}
+            - name: VUE_APP_API_HOST
+              value: {{ template "JdbcViewer.fullname" . }}-backend.mfaas.svc.cluster.local
+            - name: VUE_APP_API_PORT
+              value: "9080"
+          {{- else }}
+            - name: VUE_APP_API_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "JdbcViewer.fullname" . }}-cics-wlp-secret
+                  key: DFH_REGION_HOSTNAME
+            - name: VUE_APP_API_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "JdbcViewer.fullname" . }}-cics-wlp-secret
+                  key: DFH_REGION_HTTP
+          {{ end }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
